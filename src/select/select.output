@@ -1,0 +1,1018 @@
+State 78 conflicts: 2 shift/reduce
+State 81 conflicts: 4 shift/reduce
+
+
+Grammar
+
+    0 $accept: select_list $end
+
+    1 select_list: select
+    2            | select_list select
+
+    3 select: select_part from_part Semicolon
+    4       | select_part from_part where_part Semicolon
+
+    5 select_part: SELECT field_list
+    6            | SELECT select_opt field_list
+
+    7 @1: /* empty */
+
+    8 select_part: error @1 field_list
+
+    9 @2: /* empty */
+
+   10 select_part: error @2 select_opt field_list
+
+   11 field_list: '*'
+   12           | field_names
+
+   13 field_names: field_name
+   14            | field_names Comma field_name
+
+   15 @3: /* empty */
+
+   16 field_names: field_names error @3 field_name
+
+   17 field_name: IDENTIFIER
+   18           | error
+
+   19 from_part: FROM table_list
+
+   20 table_list: table_name
+   21           | table_list Comma table_name
+
+   22 @4: /* empty */
+
+   23 table_list: table_list error @4 table_name
+
+   24 table_name: IDENTIFIER
+   25           | error
+
+   26 where_part: WHERE condition
+
+   27 select_opt: DISTINCT
+   28           | ALL
+
+   29 condition: predicate
+   30          | Left_Bracket condition Right_Bracket
+   31          | condition condition_operator condition
+
+   32 predicate: NOT predicate
+   33          | field_value Comparison field_value
+
+   34 @5: /* empty */
+
+   35 predicate: field_value error @5 field_value
+
+   36 field_value: value
+
+   37 condition_operator: AND
+   38                   | OR
+
+   39 value: Literal
+   40      | number_expression
+   41      | No_Value
+   42      | DEFAULT
+   43      | error
+
+   44 number_expression: computable_expression
+   45                  | Left_Bracket number_expression Right_Bracket
+   46                  | number_expression number_operator number_expression
+
+   47 computable_expression: number
+   48                      | IDENTIFIER
+
+   49 number_operator: '+'
+   50                | '-'
+   51                | '*'
+   52                | '/'
+
+   53 number: negative_number
+   54       | NUMBER
+
+   55 negative_number: '-' NUMBER
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+'*' (42) 11 51
+'+' (43) 49
+'-' (45) 50 55
+'/' (47) 52
+error (256) 8 10 16 18 23 25 35 43
+SELECT (258) 5 6
+DISTINCT (259) 27
+ALL (260) 28
+FROM (261) 19
+WHERE (262) 26
+NOT (263) 32
+No_Value (264) 41
+DEFAULT (265) 42
+AND (266) 37
+OR (267) 38
+IDENTIFIER (268) 17 24 48
+Literal (269) 39
+NUMBER (270) 54 55
+Comma (271) 14 21
+Semicolon (272) 3 4
+Comparison (273) 33
+Left_Bracket (274) 30 45
+Right_Bracket (275) 30 45
+
+
+Nonterminals, with rules where they appear
+
+$accept (25)
+    on left: 0
+select_list (26)
+    on left: 1 2, on right: 0 2
+select (27)
+    on left: 3 4, on right: 1 2
+select_part (28)
+    on left: 5 6 8 10, on right: 3 4
+@1 (29)
+    on left: 7, on right: 8
+@2 (30)
+    on left: 9, on right: 10
+field_list (31)
+    on left: 11 12, on right: 5 6 8 10
+field_names (32)
+    on left: 13 14 16, on right: 12 14 16
+@3 (33)
+    on left: 15, on right: 16
+field_name (34)
+    on left: 17 18, on right: 13 14 16
+from_part (35)
+    on left: 19, on right: 3 4
+table_list (36)
+    on left: 20 21 23, on right: 19 21 23
+@4 (37)
+    on left: 22, on right: 23
+table_name (38)
+    on left: 24 25, on right: 20 21 23
+where_part (39)
+    on left: 26, on right: 4
+select_opt (40)
+    on left: 27 28, on right: 6 10
+condition (41)
+    on left: 29 30 31, on right: 26 30 31
+predicate (42)
+    on left: 32 33 35, on right: 29 32
+@5 (43)
+    on left: 34, on right: 35
+field_value (44)
+    on left: 36, on right: 33 35
+condition_operator (45)
+    on left: 37 38, on right: 31
+value (46)
+    on left: 39 40 41 42 43, on right: 36
+number_expression (47)
+    on left: 44 45 46, on right: 40 45 46
+computable_expression (48)
+    on left: 47 48, on right: 44
+number_operator (49)
+    on left: 49 50 51 52, on right: 46
+number (50)
+    on left: 53 54, on right: 47
+negative_number (51)
+    on left: 55, on right: 53
+
+
+state 0
+
+    0 $accept: . select_list $end
+
+    error   shift, and go to state 1
+    SELECT  shift, and go to state 2
+
+    select_list  go to state 3
+    select       go to state 4
+    select_part  go to state 5
+
+
+state 1
+
+    8 select_part: error . @1 field_list
+   10            | error . @2 select_opt field_list
+
+    DISTINCT  reduce using rule 9 (@2)
+    ALL       reduce using rule 9 (@2)
+    $default  reduce using rule 7 (@1)
+
+    @1  go to state 6
+    @2  go to state 7
+
+
+state 2
+
+    5 select_part: SELECT . field_list
+    6            | SELECT . select_opt field_list
+
+    error       shift, and go to state 8
+    DISTINCT    shift, and go to state 9
+    ALL         shift, and go to state 10
+    IDENTIFIER  shift, and go to state 11
+    '*'         shift, and go to state 12
+
+    field_list   go to state 13
+    field_names  go to state 14
+    field_name   go to state 15
+    select_opt   go to state 16
+
+
+state 3
+
+    0 $accept: select_list . $end
+    2 select_list: select_list . select
+
+    $end    shift, and go to state 17
+    error   shift, and go to state 1
+    SELECT  shift, and go to state 2
+
+    select       go to state 18
+    select_part  go to state 5
+
+
+state 4
+
+    1 select_list: select .
+
+    $default  reduce using rule 1 (select_list)
+
+
+state 5
+
+    3 select: select_part . from_part Semicolon
+    4       | select_part . from_part where_part Semicolon
+
+    FROM  shift, and go to state 19
+
+    from_part  go to state 20
+
+
+state 6
+
+    8 select_part: error @1 . field_list
+
+    error       shift, and go to state 8
+    IDENTIFIER  shift, and go to state 11
+    '*'         shift, and go to state 12
+
+    field_list   go to state 21
+    field_names  go to state 14
+    field_name   go to state 15
+
+
+state 7
+
+   10 select_part: error @2 . select_opt field_list
+
+    DISTINCT  shift, and go to state 9
+    ALL       shift, and go to state 10
+
+    select_opt  go to state 22
+
+
+state 8
+
+   18 field_name: error .
+
+    $default  reduce using rule 18 (field_name)
+
+
+state 9
+
+   27 select_opt: DISTINCT .
+
+    $default  reduce using rule 27 (select_opt)
+
+
+state 10
+
+   28 select_opt: ALL .
+
+    $default  reduce using rule 28 (select_opt)
+
+
+state 11
+
+   17 field_name: IDENTIFIER .
+
+    $default  reduce using rule 17 (field_name)
+
+
+state 12
+
+   11 field_list: '*' .
+
+    $default  reduce using rule 11 (field_list)
+
+
+state 13
+
+    5 select_part: SELECT field_list .
+
+    $default  reduce using rule 5 (select_part)
+
+
+state 14
+
+   12 field_list: field_names .
+   14 field_names: field_names . Comma field_name
+   16            | field_names . error @3 field_name
+
+    error  shift, and go to state 23
+    Comma  shift, and go to state 24
+
+    FROM  reduce using rule 12 (field_list)
+
+
+state 15
+
+   13 field_names: field_name .
+
+    $default  reduce using rule 13 (field_names)
+
+
+state 16
+
+    6 select_part: SELECT select_opt . field_list
+
+    error       shift, and go to state 8
+    IDENTIFIER  shift, and go to state 11
+    '*'         shift, and go to state 12
+
+    field_list   go to state 25
+    field_names  go to state 14
+    field_name   go to state 15
+
+
+state 17
+
+    0 $accept: select_list $end .
+
+    $default  accept
+
+
+state 18
+
+    2 select_list: select_list select .
+
+    $default  reduce using rule 2 (select_list)
+
+
+state 19
+
+   19 from_part: FROM . table_list
+
+    error       shift, and go to state 26
+    IDENTIFIER  shift, and go to state 27
+
+    table_list  go to state 28
+    table_name  go to state 29
+
+
+state 20
+
+    3 select: select_part from_part . Semicolon
+    4       | select_part from_part . where_part Semicolon
+
+    WHERE      shift, and go to state 30
+    Semicolon  shift, and go to state 31
+
+    where_part  go to state 32
+
+
+state 21
+
+    8 select_part: error @1 field_list .
+
+    $default  reduce using rule 8 (select_part)
+
+
+state 22
+
+   10 select_part: error @2 select_opt . field_list
+
+    error       shift, and go to state 8
+    IDENTIFIER  shift, and go to state 11
+    '*'         shift, and go to state 12
+
+    field_list   go to state 33
+    field_names  go to state 14
+    field_name   go to state 15
+
+
+state 23
+
+   16 field_names: field_names error . @3 field_name
+
+    $default  reduce using rule 15 (@3)
+
+    @3  go to state 34
+
+
+state 24
+
+   14 field_names: field_names Comma . field_name
+
+    error       shift, and go to state 8
+    IDENTIFIER  shift, and go to state 11
+
+    field_name  go to state 35
+
+
+state 25
+
+    6 select_part: SELECT select_opt field_list .
+
+    $default  reduce using rule 6 (select_part)
+
+
+state 26
+
+   25 table_name: error .
+
+    $default  reduce using rule 25 (table_name)
+
+
+state 27
+
+   24 table_name: IDENTIFIER .
+
+    $default  reduce using rule 24 (table_name)
+
+
+state 28
+
+   19 from_part: FROM table_list .
+   21 table_list: table_list . Comma table_name
+   23           | table_list . error @4 table_name
+
+    error  shift, and go to state 36
+    Comma  shift, and go to state 37
+
+    WHERE      reduce using rule 19 (from_part)
+    Semicolon  reduce using rule 19 (from_part)
+
+
+state 29
+
+   20 table_list: table_name .
+
+    $default  reduce using rule 20 (table_list)
+
+
+state 30
+
+   26 where_part: WHERE . condition
+
+    error         shift, and go to state 38
+    NOT           shift, and go to state 39
+    No_Value      shift, and go to state 40
+    DEFAULT       shift, and go to state 41
+    IDENTIFIER    shift, and go to state 42
+    Literal       shift, and go to state 43
+    NUMBER        shift, and go to state 44
+    Left_Bracket  shift, and go to state 45
+    '-'           shift, and go to state 46
+
+    condition              go to state 47
+    predicate              go to state 48
+    field_value            go to state 49
+    value                  go to state 50
+    number_expression      go to state 51
+    computable_expression  go to state 52
+    number                 go to state 53
+    negative_number        go to state 54
+
+
+state 31
+
+    3 select: select_part from_part Semicolon .
+
+    $default  reduce using rule 3 (select)
+
+
+state 32
+
+    4 select: select_part from_part where_part . Semicolon
+
+    Semicolon  shift, and go to state 55
+
+
+state 33
+
+   10 select_part: error @2 select_opt field_list .
+
+    $default  reduce using rule 10 (select_part)
+
+
+state 34
+
+   16 field_names: field_names error @3 . field_name
+
+    error       shift, and go to state 8
+    IDENTIFIER  shift, and go to state 11
+
+    field_name  go to state 56
+
+
+state 35
+
+   14 field_names: field_names Comma field_name .
+
+    $default  reduce using rule 14 (field_names)
+
+
+state 36
+
+   23 table_list: table_list error . @4 table_name
+
+    $default  reduce using rule 22 (@4)
+
+    @4  go to state 57
+
+
+state 37
+
+   21 table_list: table_list Comma . table_name
+
+    error       shift, and go to state 26
+    IDENTIFIER  shift, and go to state 27
+
+    table_name  go to state 58
+
+
+state 38
+
+   43 value: error .
+
+    $default  reduce using rule 43 (value)
+
+
+state 39
+
+   32 predicate: NOT . predicate
+
+    error         shift, and go to state 38
+    NOT           shift, and go to state 39
+    No_Value      shift, and go to state 40
+    DEFAULT       shift, and go to state 41
+    IDENTIFIER    shift, and go to state 42
+    Literal       shift, and go to state 43
+    NUMBER        shift, and go to state 44
+    Left_Bracket  shift, and go to state 59
+    '-'           shift, and go to state 46
+
+    predicate              go to state 60
+    field_value            go to state 49
+    value                  go to state 50
+    number_expression      go to state 51
+    computable_expression  go to state 52
+    number                 go to state 53
+    negative_number        go to state 54
+
+
+state 40
+
+   41 value: No_Value .
+
+    $default  reduce using rule 41 (value)
+
+
+state 41
+
+   42 value: DEFAULT .
+
+    $default  reduce using rule 42 (value)
+
+
+state 42
+
+   48 computable_expression: IDENTIFIER .
+
+    $default  reduce using rule 48 (computable_expression)
+
+
+state 43
+
+   39 value: Literal .
+
+    $default  reduce using rule 39 (value)
+
+
+state 44
+
+   54 number: NUMBER .
+
+    $default  reduce using rule 54 (number)
+
+
+state 45
+
+   30 condition: Left_Bracket . condition Right_Bracket
+   45 number_expression: Left_Bracket . number_expression Right_Bracket
+
+    error         shift, and go to state 38
+    NOT           shift, and go to state 39
+    No_Value      shift, and go to state 40
+    DEFAULT       shift, and go to state 41
+    IDENTIFIER    shift, and go to state 42
+    Literal       shift, and go to state 43
+    NUMBER        shift, and go to state 44
+    Left_Bracket  shift, and go to state 45
+    '-'           shift, and go to state 46
+
+    condition              go to state 61
+    predicate              go to state 48
+    field_value            go to state 49
+    value                  go to state 50
+    number_expression      go to state 62
+    computable_expression  go to state 52
+    number                 go to state 53
+    negative_number        go to state 54
+
+
+state 46
+
+   55 negative_number: '-' . NUMBER
+
+    NUMBER  shift, and go to state 63
+
+
+state 47
+
+   26 where_part: WHERE condition .
+   31 condition: condition . condition_operator condition
+
+    AND  shift, and go to state 64
+    OR   shift, and go to state 65
+
+    $default  reduce using rule 26 (where_part)
+
+    condition_operator  go to state 66
+
+
+state 48
+
+   29 condition: predicate .
+
+    $default  reduce using rule 29 (condition)
+
+
+state 49
+
+   33 predicate: field_value . Comparison field_value
+   35          | field_value . error @5 field_value
+
+    error       shift, and go to state 67
+    Comparison  shift, and go to state 68
+
+
+state 50
+
+   36 field_value: value .
+
+    $default  reduce using rule 36 (field_value)
+
+
+state 51
+
+   40 value: number_expression .
+   46 number_expression: number_expression . number_operator number_expression
+
+    '*'  shift, and go to state 69
+    '+'  shift, and go to state 70
+    '-'  shift, and go to state 71
+    '/'  shift, and go to state 72
+
+    $default  reduce using rule 40 (value)
+
+    number_operator  go to state 73
+
+
+state 52
+
+   44 number_expression: computable_expression .
+
+    $default  reduce using rule 44 (number_expression)
+
+
+state 53
+
+   47 computable_expression: number .
+
+    $default  reduce using rule 47 (computable_expression)
+
+
+state 54
+
+   53 number: negative_number .
+
+    $default  reduce using rule 53 (number)
+
+
+state 55
+
+    4 select: select_part from_part where_part Semicolon .
+
+    $default  reduce using rule 4 (select)
+
+
+state 56
+
+   16 field_names: field_names error @3 field_name .
+
+    $default  reduce using rule 16 (field_names)
+
+
+state 57
+
+   23 table_list: table_list error @4 . table_name
+
+    error       shift, and go to state 26
+    IDENTIFIER  shift, and go to state 27
+
+    table_name  go to state 74
+
+
+state 58
+
+   21 table_list: table_list Comma table_name .
+
+    $default  reduce using rule 21 (table_list)
+
+
+state 59
+
+   45 number_expression: Left_Bracket . number_expression Right_Bracket
+
+    IDENTIFIER    shift, and go to state 42
+    NUMBER        shift, and go to state 44
+    Left_Bracket  shift, and go to state 59
+    '-'           shift, and go to state 46
+
+    number_expression      go to state 75
+    computable_expression  go to state 52
+    number                 go to state 53
+    negative_number        go to state 54
+
+
+state 60
+
+   32 predicate: NOT predicate .
+
+    $default  reduce using rule 32 (predicate)
+
+
+state 61
+
+   30 condition: Left_Bracket condition . Right_Bracket
+   31          | condition . condition_operator condition
+
+    AND            shift, and go to state 64
+    OR             shift, and go to state 65
+    Right_Bracket  shift, and go to state 76
+
+    condition_operator  go to state 66
+
+
+state 62
+
+   40 value: number_expression .
+   45 number_expression: Left_Bracket number_expression . Right_Bracket
+   46                  | number_expression . number_operator number_expression
+
+    Right_Bracket  shift, and go to state 77
+    '*'            shift, and go to state 69
+    '+'            shift, and go to state 70
+    '-'            shift, and go to state 71
+    '/'            shift, and go to state 72
+
+    $default  reduce using rule 40 (value)
+
+    number_operator  go to state 73
+
+
+state 63
+
+   55 negative_number: '-' NUMBER .
+
+    $default  reduce using rule 55 (negative_number)
+
+
+state 64
+
+   37 condition_operator: AND .
+
+    $default  reduce using rule 37 (condition_operator)
+
+
+state 65
+
+   38 condition_operator: OR .
+
+    $default  reduce using rule 38 (condition_operator)
+
+
+state 66
+
+   31 condition: condition condition_operator . condition
+
+    error         shift, and go to state 38
+    NOT           shift, and go to state 39
+    No_Value      shift, and go to state 40
+    DEFAULT       shift, and go to state 41
+    IDENTIFIER    shift, and go to state 42
+    Literal       shift, and go to state 43
+    NUMBER        shift, and go to state 44
+    Left_Bracket  shift, and go to state 45
+    '-'           shift, and go to state 46
+
+    condition              go to state 78
+    predicate              go to state 48
+    field_value            go to state 49
+    value                  go to state 50
+    number_expression      go to state 51
+    computable_expression  go to state 52
+    number                 go to state 53
+    negative_number        go to state 54
+
+
+state 67
+
+   35 predicate: field_value error . @5 field_value
+
+    $default  reduce using rule 34 (@5)
+
+    @5  go to state 79
+
+
+state 68
+
+   33 predicate: field_value Comparison . field_value
+
+    error         shift, and go to state 38
+    No_Value      shift, and go to state 40
+    DEFAULT       shift, and go to state 41
+    IDENTIFIER    shift, and go to state 42
+    Literal       shift, and go to state 43
+    NUMBER        shift, and go to state 44
+    Left_Bracket  shift, and go to state 59
+    '-'           shift, and go to state 46
+
+    field_value            go to state 80
+    value                  go to state 50
+    number_expression      go to state 51
+    computable_expression  go to state 52
+    number                 go to state 53
+    negative_number        go to state 54
+
+
+state 69
+
+   51 number_operator: '*' .
+
+    $default  reduce using rule 51 (number_operator)
+
+
+state 70
+
+   49 number_operator: '+' .
+
+    $default  reduce using rule 49 (number_operator)
+
+
+state 71
+
+   50 number_operator: '-' .
+
+    $default  reduce using rule 50 (number_operator)
+
+
+state 72
+
+   52 number_operator: '/' .
+
+    $default  reduce using rule 52 (number_operator)
+
+
+state 73
+
+   46 number_expression: number_expression number_operator . number_expression
+
+    IDENTIFIER    shift, and go to state 42
+    NUMBER        shift, and go to state 44
+    Left_Bracket  shift, and go to state 59
+    '-'           shift, and go to state 46
+
+    number_expression      go to state 81
+    computable_expression  go to state 52
+    number                 go to state 53
+    negative_number        go to state 54
+
+
+state 74
+
+   23 table_list: table_list error @4 table_name .
+
+    $default  reduce using rule 23 (table_list)
+
+
+state 75
+
+   45 number_expression: Left_Bracket number_expression . Right_Bracket
+   46                  | number_expression . number_operator number_expression
+
+    Right_Bracket  shift, and go to state 77
+    '*'            shift, and go to state 69
+    '+'            shift, and go to state 70
+    '-'            shift, and go to state 71
+    '/'            shift, and go to state 72
+
+    number_operator  go to state 73
+
+
+state 76
+
+   30 condition: Left_Bracket condition Right_Bracket .
+
+    $default  reduce using rule 30 (condition)
+
+
+state 77
+
+   45 number_expression: Left_Bracket number_expression Right_Bracket .
+
+    $default  reduce using rule 45 (number_expression)
+
+
+state 78
+
+   31 condition: condition . condition_operator condition
+   31          | condition condition_operator condition .
+
+    AND  shift, and go to state 64
+    OR   shift, and go to state 65
+
+    AND       [reduce using rule 31 (condition)]
+    OR        [reduce using rule 31 (condition)]
+    $default  reduce using rule 31 (condition)
+
+    condition_operator  go to state 66
+
+
+state 79
+
+   35 predicate: field_value error @5 . field_value
+
+    error         shift, and go to state 38
+    No_Value      shift, and go to state 40
+    DEFAULT       shift, and go to state 41
+    IDENTIFIER    shift, and go to state 42
+    Literal       shift, and go to state 43
+    NUMBER        shift, and go to state 44
+    Left_Bracket  shift, and go to state 59
+    '-'           shift, and go to state 46
+
+    field_value            go to state 82
+    value                  go to state 50
+    number_expression      go to state 51
+    computable_expression  go to state 52
+    number                 go to state 53
+    negative_number        go to state 54
+
+
+state 80
+
+   33 predicate: field_value Comparison field_value .
+
+    $default  reduce using rule 33 (predicate)
+
+
+state 81
+
+   46 number_expression: number_expression . number_operator number_expression
+   46                  | number_expression number_operator number_expression .
+
+    '*'  shift, and go to state 69
+    '+'  shift, and go to state 70
+    '-'  shift, and go to state 71
+    '/'  shift, and go to state 72
+
+    '*'       [reduce using rule 46 (number_expression)]
+    '+'       [reduce using rule 46 (number_expression)]
+    '-'       [reduce using rule 46 (number_expression)]
+    '/'       [reduce using rule 46 (number_expression)]
+    $default  reduce using rule 46 (number_expression)
+
+    number_operator  go to state 73
+
+
+state 82
+
+   35 predicate: field_value error @5 field_value .
+
+    $default  reduce using rule 35 (predicate)
